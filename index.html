@@ -995,6 +995,8 @@
 
     function drawCheekBlush(x, y, rx, ry, intensity) {
       if (intensity <= 0) return;
+          // 栞（shiori）のときだけ頬のエフェクトを無効化
+      if (typeof currentHeroine !== 'undefined' && (currentHeroine === 'shiori' || currentHeroine?.id === 'shiori')) return;
       ctx.save();
       const grad = ctx.createRadialGradient(x, y, 2, x, y, rx);
       grad.addColorStop(0, `rgba(255, 72, 120, ${0.68 * intensity})`);
