@@ -988,33 +988,6 @@
       ctx.restore();
     }
 
-    function drawCheekBlush(x, y, rx, ry, intensity) {
-      if (intensity <= 0) return;
-      ctx.save();
-      const grad = ctx.createRadialGradient(x, y, 2, x, y, rx);
-      grad.addColorStop(0, `rgba(255, 72, 120, ${0.68 * intensity})`);
-      grad.addColorStop(0.55, `rgba(255, 105, 145, ${0.42 * intensity})`);
-      grad.addColorStop(1, 'rgba(255, 105, 145, 0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Anime-style diagonal blush hatch lines when strongly flustered
-      if (intensity >= 0.55) {
-        ctx.strokeStyle = `rgba(235, 45, 95, ${0.55 * intensity})`;
-        ctx.lineWidth = 1.8;
-        ctx.lineCap = 'round';
-        for (let i = -1; i <= 1; i++) {
-          ctx.beginPath();
-          ctx.moveTo(x + i * 6 - 2, y + 4);
-          ctx.lineTo(x + i * 6 + 2, y - 4);
-          ctx.stroke();
-        }
-      }
-      ctx.restore();
-    }
-
     function drawPixelHeroine() {
       const W = 256;
       const H = 256;
