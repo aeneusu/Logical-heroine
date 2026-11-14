@@ -1138,7 +1138,7 @@
         if (blushLevel === 3) blushIntensity = 1.0;
         if (isFlusteredBurst) blushIntensity = Math.min(1.0, blushIntensity + 0.35 * reactRatio);
       }
-      if (!isYamaken && blushIntensity > 0) {
+      if (hKey !== 'shiori' && !isYamaken && blushIntensity > 0) {
         drawCheekBlush(anchor.leftCheek[0] - W / 2, anchor.leftCheek[1] - H / 2, 22, 13, blushIntensity);
         drawCheekBlush(anchor.rightCheek[0] - W / 2, anchor.rightCheek[1] - H / 2, 22, 13, blushIntensity);
       }
