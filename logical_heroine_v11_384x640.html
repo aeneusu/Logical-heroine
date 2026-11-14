@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ロジカル・ヒロイン攻略大作戦 ～英語でわからせろ！～</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg-grad-1: #fff5f8;
+    --bg-grad-2: #f0f7ff;
+    --card-bg: #ffffff;
+    --accent-pink: #ff6b9d;
+    --accent-pink-dark: #e04f80;
+    --accent-blue: #4a90e2;
+    --accent-indigo: #5b6abf;
+    --text-main: #333745;
+    --text-sub: #6c7284;
+    --border-soft: #e6e9f2;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 500;
+    background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 960px;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: 0 12px 36px rgba(91, 106, 191, 0.12);
+    border: 2px solid #ffffff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(90deg, #ff7eb3 0%, #7aa7ff 100%);
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  header.shiori-theme {
+    background: linear-gradient(90deg, #5c7cfa 0%, #9775fa 100%);
+  }
+
+  .title-box h1 {
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+    text-shadow: 1px 2px 0 rgba(0,0,0,0.15);
+  }
+
+  .mode-switch {
+    display: flex;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 4px;
+    border-radius: 999px;
+    gap: 4px;
+  }
+
+  .mode-btn {
+    border: none;
+    background: transparent;
+    color: white;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .mode-btn.active {
+    background: white;
+    color: var(--accent-pink-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  header.shiori-theme .mode-btn.active {
+    color: var(--accent-indigo);
+  }
+
+  /* Main Layout */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 420px minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left: Heroine Stage */
+  .heroine-stage {
+    background: linear-gradient(180deg, #fdfbff 0%, #f3f6ff 100%);
+    border: 2px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .heroine-badge {
+    align-self: flex-start;
+    background: #ffe3ee;
+    color: var(--accent-pink-dark);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+
+  .heroine-badge.shiori {
+    background: #e7ebff;
+    color: var(--accent-indigo);
+  }
+
+  .canvas-frame {
+    width: min(100%, 384px);
+    aspect-ratio: 3 / 5;
+    height: auto;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 3px solid #e2e8f8;
+    background: #ffe8f3;
+    box-shadow: inset 0 0 20px rgba(122, 167, 255, 0.15);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  canvas#pixelCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .status-panel {
+    width: 100%;
+    margin-top: 14px;
+    background: white;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+  }
+
+  .hp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .hp-label {
+    color: var(--text-sub);
+  }
+
+  .hp-val {
+    color: var(--accent-pink-dark);
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 800;
+    font-size: 1rem;
+  }
+
+  .hp-bar-bg {
+    width: 100%;
+    height: 14px;
+    background: #edf0f7;
+    border-radius: 999px;
+    overflow: hidden;
+    padding: 2px;
+  }
+
+  .hp-bar-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ff6b9d, #ff9a76);
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hp-bar-fill.shiori {
+    background: linear-gradient(90deg, #5c7cfa, #845ef7);
+  }
+
+  .affection-tag {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-pink-dark);
+    background: #fff0f6;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+
+  .affection-tag.shiori {
+    color: var(--accent-indigo);
+    background: #eef2ff;
+  }
+
+  /* Right: Dialogue & Input */
+  .interaction-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .dialogue-box {
+    background: #f8faff;
+    border: 2px solid #dce6ff;
+    border-radius: 18px;
+    padding: 16px 20px;
+    position: relative;
+  }
+
+  .speaker-name {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--accent-pink-dark);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .speaker-name.shiori {
+    color: var(--accent-indigo);
+  }
+
+  .dialogue-text {
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: var(--text-main);
+    min-height: 52px;
+  }
+
+  .topic-card {
+    background: #fff9eb;
+    border: 2px dashed #ffd166;
+    border-radius: 16px;
+    padding: 14px 18px;
+  }
+
+  .topic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .topic-badge {
+    background: #ffb703;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+
+  .change-topic-btn {
+    background: white;
+    border: 1px solid #ffd166;
+    color: #b57c00;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .change-topic-btn:hover {
+    background: #fff3d1;
+  }
+
+  .topic-en {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #2b2d42;
+    margin-bottom: 2px;
+  }
+
+  .topic-jp {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    white-space: pre-line;
+    line-height: 1.65;
+  }
+
+  /* Input Box */
+  .input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .input-hint {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+
+  .sample-btn {
+    background: #f0f4ff;
+    border: 1px solid #c5d5ff;
+    color: var(--accent-indigo);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .sample-btn:hover {
+    background: #dfe8ff;
+  }
+
+  textarea#englishInput {
+    width: 100%;
+    height: 108px;
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 14px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.98rem;
+    line-height: 1.5;
+    color: var(--text-main);
+    resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  textarea#englishInput:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.12);
+  }
+
+  .action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .word-counter {
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+
+  .submit-btn {
+    background: linear-gradient(90deg, #ff6b9d 0%, #ff8e72 100%);
+    color: white;
+    border: none;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 12px 28px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(255, 107, 157, 0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .submit-btn.shiori {
+    background: linear-gradient(90deg, #5c7cfa 0%, #7950f2 100%);
+    box-shadow: 0 6px 16px rgba(92, 124, 250, 0.35);
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Modal Overlay (Feedback & Clear) */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(34, 38, 57, 0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    z-index: 100;
+  }
+
+  .modal-backdrop.show {
+    display: flex;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-card {
+    background: white;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .damage-pill {
+    background: #ffe3ee;
+    color: var(--accent-pink-dark);
+    font-size: 0.9rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .score-item {
+    background: #f8faff;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .score-item-label {
+    font-size: 0.76rem;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+
+  .score-item-num {
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--accent-indigo);
+    margin-top: 2px;
+  }
+
+  .feedback-section {
+    background: #f9fafc;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--accent-blue);
+  }
+
+  .feedback-section.model {
+    background: #f3fbf7;
+    border-left-color: #2ecc71;
+  }
+
+  .feedback-heading {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin-bottom: 4px;
+  }
+
+  .feedback-body {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--text-main);
+  }
+
+  .modal-close-btn {
+    width: 100%;
+    background: var(--accent-indigo);
+    color: white;
+    border: none;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 12px;
+    border-radius: 14px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  /* Clear Banner */
+  .clear-banner {
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  .clear-title {
+    font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 800;
+    font-size: 1.8rem;
+    color: var(--accent-pink-dark);
+    margin-bottom: 8px;
+  }
+
+  .clear-quote {
+    background: #fff0f6;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 14px 0;
+    color: #4a2535;
+    font-weight: 700;
+  }
+
+  .clear-quote.shiori {
+    background: #eef2ff;
+    color: #273059;
+  }
+
+
+  /* Soft floating hearts in the page background */
+  .heart-background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    color: #f4a8c5;
+  }
+  .heart-background span {
+    position: absolute;
+    display: block;
+    opacity: .24;
+    line-height: 1;
+    animation: heart-drift 11s ease-in-out infinite;
+    filter: drop-shadow(0 3px 5px rgba(225, 110, 157, .10));
+  }
+  .heart-background span:nth-child(1) { left: 5%; top: 12%; font-size: 30px; animation-delay: -2s; }
+  .heart-background span:nth-child(2) { left: 16%; top: 76%; font-size: 20px; animation-delay: -7s; }
+  .heart-background span:nth-child(3) { left: 83%; top: 13%; font-size: 34px; animation-delay: -4s; }
+  .heart-background span:nth-child(4) { left: 92%; top: 68%; font-size: 25px; animation-delay: -9s; }
+  .heart-background span:nth-child(5) { left: 72%; top: 88%; font-size: 18px; animation-delay: -1s; }
+  .heart-background span:nth-child(6) { left: 34%; top: 5%; font-size: 17px; animation-delay: -5s; }
+  .heart-background span:nth-child(7) { left: 47%; top: 92%; font-size: 28px; animation-delay: -8s; }
+  .heart-background span:nth-child(8) { left: 2%; top: 48%; font-size: 16px; animation-delay: -3s; }
+  @keyframes heart-drift {
+    0%, 100% { transform: translateY(0) rotate(-8deg) scale(1); }
+    50% { transform: translateY(-15px) rotate(8deg) scale(1.08); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .heart-background span { animation: none; }
+  }
+  .title-screen, .app-container { position: relative; z-index: 1; }
+
+  /* Title screen, character select, in-game controls and final result */
+  .screen-hidden { display: none !important; }
+  .title-screen {
+    width: 100%; max-width: 960px; padding: 28px 22px 30px;
+    position: relative; overflow: hidden;
+    background: linear-gradient(145deg, #fff0f6 0%, #ffe4ef 52%, #fff2f7 100%);
+    border: 2px solid #fff; border-radius: 24px;
+    box-shadow: 0 12px 36px rgba(225, 110, 157, .18); text-align: center;
+  }
+  .title-screen > :not(.title-hearts) { position: relative; z-index: 1; }
+  .title-hearts { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .title-hearts span { position: absolute; color: #ee8fb3; opacity: .28; line-height: 1; text-shadow: 0 2px 5px rgba(210, 93, 140, .10); }
+  .title-hearts span:nth-child(1) { top: 8%; left: 4%; font-size: 38px; transform: rotate(-15deg); }
+  .title-hearts span:nth-child(2) { top: 20%; right: 5%; font-size: 30px; transform: rotate(12deg); }
+  .title-hearts span:nth-child(3) { top: 48%; left: 1.5%; font-size: 24px; }
+  .title-hearts span:nth-child(4) { top: 65%; right: 2%; font-size: 42px; transform: rotate(15deg); }
+  .title-hearts span:nth-child(5) { bottom: 5%; left: 12%; font-size: 25px; transform: rotate(10deg); }
+  .title-hearts span:nth-child(6) { bottom: 4%; right: 18%; font-size: 32px; transform: rotate(-12deg); }
+  .title-hearts span:nth-child(7) { top: 37%; right: 17%; font-size: 18px; }
+  .title-hearts span:nth-child(8) { top: 78%; left: 43%; font-size: 19px; }
+  .game-logo { font-family:'M PLUS Rounded 1c',sans-serif; font-weight:900; color:#e04f80; font-size:clamp(1.65rem,4.2vw,2.65rem); line-height:1.5; letter-spacing:.035em; text-shadow:0 2px 0 #fff, 2px 4px 0 #ffe0ec; }
+  .game-subtitle { margin:8px 0 22px; color:var(--text-sub); font-weight:700; }
+  .select-heading { font-size:1.15rem; margin:16px 0 12px; }
+  .character-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; text-align:left; }
+  .character-card { border:2px solid var(--border-soft); border-radius:16px; padding:14px 12px; background:#fff; color:var(--text-main); cursor:pointer; text-align:left; min-height:170px; transition:.18s ease; font:inherit; }
+  .character-card:hover { transform:translateY(-3px); border-color:#ff9cbd; }
+  .character-card.selected { border-color:var(--accent-pink); background:#fff4f8; box-shadow:0 0 0 3px rgba(255,107,157,.12); }
+  .character-card .char-emoji { font-size:1.8rem; display:block; margin-bottom:6px; }
+  .character-card strong { display:block; font-size:1rem; margin-bottom:5px; }
+  .character-card small { display:block; color:var(--text-sub); line-height:1.55; font-size:.78rem; }
+  .character-card .difficulty { display:block; margin-top:8px; color:#a04a70; font-size:.75rem; font-weight:800; }
+  .start-btn { margin-top:22px; min-width:min(100%,320px); border:0; border-radius:999px; padding:14px 30px; color:#fff; background:linear-gradient(90deg,#ff6b9d,#7aa7ff); font:800 1.1rem 'M PLUS Rounded 1c',sans-serif; cursor:pointer; box-shadow:0 6px 16px rgba(255,107,157,.25); }
+  .start-btn:disabled { opacity:.45; cursor:not-allowed; }
+  .game-header-actions { display:flex; align-items:center; gap:12px; }
+  .game-timer { color:#fff; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .back-title-btn { border:1px solid rgba(255,255,255,.65); background:rgba(255,255,255,.16); color:#fff; border-radius:999px; padding:7px 12px; font:700 .78rem 'M PLUS Rounded 1c',sans-serif; cursor:pointer; white-space:nowrap; }
+  .back-title-btn:hover { background:rgba(255,255,255,.28); }
+  .final-result { text-align:center; }
+  .result-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    gap: 22px;
+    align-items: start;
+  }
+  .result-character-image {
+    display: block;
+    width: 100%;
+    max-height: 72vh;
+    aspect-ratio: 3 / 5;
+    object-fit: contain;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fff4f8, #f1f4ff);
+    border: 2px solid var(--border-soft);
+  }
+  @media (max-width: 680px) {
+    .result-layout { grid-template-columns: 1fr; }
+    .result-character-image { width: min(100%, 320px); margin: 0 auto; grid-row: 1; }
+  }
+  .final-result .clear-title { font-size:clamp(1.8rem,5vw,2.7rem); color:#e04f80; margin:8px 0 14px; }
+  .result-meta { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:16px 0; }
+  .result-meta > div { background:#f7f8fc; border:1px solid var(--border-soft); border-radius:12px; padding:12px 6px; }
+  .result-meta small { display:block; color:var(--text-sub); font-weight:700; }
+  .result-meta strong { display:block; color:var(--accent-indigo); font-size:1.25rem; margin-top:3px; }
+  .points-list { text-align:left; padding-left:1.3em; line-height:1.7; }
+  .final-yamaken { background:#eef1f5; color:#303846; }
+  @media (max-width:760px) {
+    .character-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .character-card { min-height:145px; }
+    .game-header-actions { width:100%; justify-content:space-between; }
+    header { align-items:flex-start; }
+  }
+  @media (max-width:420px) {
+    .title-screen { padding:22px 14px; }
+    .character-grid { gap:8px; }
+    .character-card { padding:10px; }
+    .result-meta { grid-template-columns:1fr; }
+  }
+
+
+  /* Rounded typography is intentionally limited to the title and result screens. */
+  #startScreen,
+  #startScreen *,
+  #resultModal .final-result,
+  #resultModal .final-result * {
+    font-family: 'M PLUS Rounded 1c', sans-serif !important;
+    font-synthesis: none;
+  }
+  #startScreen .game-logo,
+  #resultModal .final-result .clear-title {
+    font-weight: 800;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="heart-background" aria-hidden="true"><span>♡</span><span>♥</span><span>♡</span><span>♥</span><span>♡</span><span>♥</span><span>♡</span><span>♥</span></div>
+
+<div id="startScreen" class="title-screen">
+  <div class="title-hearts" aria-hidden="true"><span>♡</span><span>♥</span><span>♡</span><span>♥</span><span>♡</span><span>♥</span><span>♡</span><span>♡</span></div>
+  <div class="game-logo">ロジカル・ヒロイン<br>攻略大作戦</div>
+  <p class="game-subtitle">～ 英語でわからせろ！ ～</p>
+  <h2 class="select-heading">攻略する相手を選んでください</h2>
+  <div class="character-grid" id="characterGrid">
+    <button type="button" class="character-card selected" data-character="rina" aria-pressed="true">
+      <span class="char-emoji">💖</span><strong>莉奈（りな）</strong><small>金髪ツインテールのギャル。強気でノリがよく、簡単には本音を見せない。</small><span class="difficulty">難易度：★★☆☆☆</span>
+    </button>
+    <button type="button" class="character-card" data-character="shiori" aria-pressed="false">
+      <span class="char-emoji">👓</span><strong>栞（しおり）</strong><small>黒髪ロングの知的な優等生。丁寧な言葉と筋の通った説明を好む。</small><span class="difficulty">難易度：★★★☆☆</span>
+    </button>
+    <button type="button" class="character-card" data-character="himari" aria-pressed="false">
+      <span class="char-emoji">☀️</span><strong>陽葵（ひまり）</strong><small>茶髪ショートの自信家。自分の考えに確信があり、根拠の弱い主張は受け入れない。</small><span class="difficulty">難易度：★★★★☆</span>
+    </button>
+    <button type="button" class="character-card" data-character="yamaken" aria-pressed="false">
+      <span class="char-emoji">📚</span><strong>山田健一（ヤマケン）</strong><small>50代。上智大学出身の高校英語教師。語数・構成・論証を細かく指定する超難関の相手。</small><span class="difficulty">難易度：★★★★★ MAX</span>
+    </button>
+  </div>
+  <button type="button" class="start-btn" id="btnStartGame">▶ スタート</button>
+</div>
+
+<div class="app-container screen-hidden" id="gameScreen">
+  <header id="appHeader">
+    <div class="title-box">
+      <h1>💘 ロジカル・ヒロイン攻略大作戦 ～英語でわからせろ！～</h1>
+    </div>
+    <div class="game-header-actions">
+      <span class="game-timer" id="gameTimer">⏱ 00:00</span>
+      <button type="button" class="back-title-btn" id="btnBackToTitle">↩ タイトルへ</button>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <!-- Left Column: Vertical Character Illustration (384x640) -->
+    <div class="heroine-stage">
+      <div class="heroine-badge" id="heroineBadge">金髪ギャル / ガード堅め</div>
+      <div class="canvas-frame">
+        <canvas id="pixelCanvas" width="384" height="640"></canvas>
+      </div>
+      <div class="status-panel">
+        <div class="hp-row">
+          <span class="hp-label" id="hpLabelText">心のガード HP</span>
+          <span class="hp-val"><span id="hpCurrent">100</span> / 100</span>
+        </div>
+        <div class="hp-bar-bg">
+          <div class="hp-bar-fill" id="hpBarFill"></div>
+        </div>
+        <div class="affection-tag" id="affectionStatus">状態：まだ余裕の表情（冷静）</div>
+      </div>
+    </div>
+
+    <!-- Right Column: Character Dialogue & English Composition -->
+    <div class="interaction-area">
+      <div class="dialogue-box">
+        <div class="speaker-name" id="speakerName">💬 莉奈（りな）</div>
+        <div class="dialogue-text" id="dialogueText">
+          「はぁ？英語で口説くとかマジウケるんですけど〜！あんたの英語が受験レベルで論理的か、あたしが採点してあげるよ♪」
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <div class="topic-header">
+          <span class="topic-badge">🔥 現在の議題（自由英作文テーマ）</span>
+          <button type="button" class="change-topic-btn" id="btnNextTopic">別の議題にする ↻</button>
+        </div>
+        <div class="topic-en" id="topicEn">Should high school students use AI translation tools to study English?</div>
+        <div class="topic-jp" id="topicJp">（高校生は英語学習にAI翻訳ツールを使うべきか？ ―― ついでに私への想いも論理的に伝えてみなさいよ！）</div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-toolbar">
+          <span class="input-hint">✍️ 主張＋理由＋彼女への口説きを英語で入力（2文以上推奨）</span>
+          <button type="button" class="sample-btn" id="btnInsertSample">✨ 英文構成テンプレートを入れる</button>
+        </div>
+        <textarea id="englishInput" placeholder="Example: I believe that AI tools are helpful, because they save time. However, I want to talk with you in my own words since your smile inspires me to study harder."></textarea>
+        <div class="action-row">
+          <span class="word-counter" id="wordCounter">単語数: 0 words</span>
+          <button type="button" class="submit-btn" id="btnSubmit">💘 英語で口説く（送信）</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Evaluation / Clear Modal -->
+<div class="modal-backdrop" id="resultModal">
+  <div class="modal-card" id="modalCardContent">
+    <!-- Dynamic content -->
+  </div>
+</div>
+
+<script>
+(function() {
+  // --- Game State ---
+  const state = {
+    heroine: 'rina', // 'rina' | 'shiori' | 'himari' | 'yamaken'
+    hp: 100,
+    maxHp: 100,
+    turns: 0,
+    totalScore: 0,
+    topicIndex: 0,
+    isCleared: false,
+    tick: 0,
+    reactionTick: 0,
+    lastReaction: 'normal', // 'normal' | 'low' | 'mid' | 'high' | 'cleared'
+    startTime: null,
+    elapsedMs: 0,
+    feedbackPoints: []
+  };
+
+  // --- Topics Data ---
+  const topics = {
+    rina: [
+      {
+        en: "Should high school students rely on AI translation instead of studying English?",
+        jp: "翻訳AIがあれば英語の勉強なんていらないって思わない？ あたしを納得させてみなよ！",
+        sample: "Although AI translation is convenient, I strongly believe we should study English ourselves because direct communication builds real trust. In fact, I want to express my genuine feelings to you in my own words."
+      },
+      {
+        en: "Is using social media more beneficial or harmful for high school students?",
+        jp: "SNSって最高じゃん？ でもSNSに頼りすぎるのはダメって言うなら、論理的に証明してみてよ♪",
+        sample: "While social media helps us connect easily, excessive use can waste precious time needed for our future goals. Therefore, I prefer spending my time talking directly with someone special like you."
+      },
+      {
+        en: "Why is going to university important for young people today?",
+        jp: "大学に行く意味って何なの？ ただ遊ぶためじゃないって言うなら、かっこいい理由を聞かせてよね！",
+        sample: "Going to university is important because it allows us to acquire specialized knowledge and meet diverse people. Moreover, studying hard now will enable me to become a person worthy of standing beside you."
+      },
+      {
+        en: "Should high schools abolish school uniforms and allow free clothing?",
+        jp: "制服とかマジダルくない？ 私服OKにするべきか、それとも制服にメリットがあるのか、あんたの意見は？",
+        sample: "I think school uniforms should be kept since they promote equality and save students time every morning. However, even in a simple uniform, your bright personality shines more than anyone else."
+      }
+,
+      {"en": "Should high school students have part-time jobs during the school year?", "jp": "ねえ、Should high school students have part-time jobs during the school year? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to live in a big city or in the countryside?", "jp": "ねえ、Is it better to live in a big city or in the countryside? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students be allowed to use smartphones during school breaks?", "jp": "ねえ、Should students be allowed to use smartphones during school breaks? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Do school festivals play an important role in students' lives?", "jp": "ねえ、Do school festivals play an important role in students' lives? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools start classes later in the morning?", "jp": "ねえ、Should schools start classes later in the morning? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is playing sports more valuable than watching sports?", "jp": "ねえ、Is playing sports more valuable than watching sports? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should famous people be expected to act as role models?", "jp": "ねえ、Should famous people be expected to act as role models? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is online shopping better than shopping at physical stores?", "jp": "ねえ、Is online shopping better than shopping at physical stores? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students be encouraged to study abroad?", "jp": "ねえ、Should students be encouraged to study abroad? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Does competition help young people improve?", "jp": "ねえ、Does competition help young people improve? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools provide free lunches for every student?", "jp": "ねえ、Should schools provide free lunches for every student? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to spend money on experiences than on possessions?", "jp": "ねえ、Is it better to spend money on experiences than on possessions? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students be allowed to choose more of their school subjects?", "jp": "ねえ、Should students be allowed to choose more of their school subjects? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can video games have a positive influence on young people?", "jp": "ねえ、Can video games have a positive influence on young people? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should public places provide more spaces for teenagers?", "jp": "ねえ、Should public places provide more spaces for teenagers? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is learning to cook an essential skill for teenagers?", "jp": "ねえ、Is learning to cook an essential skill for teenagers? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools limit the amount of homework they assign?", "jp": "ねえ、Should schools limit the amount of homework they assign? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is travelling the best way to learn about other cultures?", "jp": "ねえ、Is travelling the best way to learn about other cultures? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should advertisements aimed at children be restricted?", "jp": "ねえ、Should advertisements aimed at children be restricted? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Do celebrities have too much influence on young people's choices?", "jp": "ねえ、Do celebrities have too much influence on young people's choices? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should high school students be required to exercise every day?", "jp": "ねえ、Should high school students be required to exercise every day? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to work in a team than independently?", "jp": "ねえ、Is it better to work in a team than independently? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should cities make public parks larger and more accessible?", "jp": "ねえ、Should cities make public parks larger and more accessible? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can fashion be a meaningful form of self-expression?", "jp": "ねえ、Can fashion be a meaningful form of self-expression? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students take a gap year before entering university?", "jp": "ねえ、Should students take a gap year before entering university? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is eating locally produced food better for society?", "jp": "ねえ、Is eating locally produced food better for society? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools teach practical money-management skills?", "jp": "ねえ、Should schools teach practical money-management skills? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Does technology make people less patient?", "jp": "ねえ、Does technology make people less patient? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should public libraries receive more funding?", "jp": "ねえ、Should public libraries receive more funding? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it important for teenagers to follow the news?", "jp": "ねえ、Is it important for teenagers to follow the news? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools replace some written tests with projects?", "jp": "ねえ、Should schools replace some written tests with projects? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can music education improve students' academic performance?", "jp": "ねえ、Can music education improve students' academic performance? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should companies allow employees to work from home?", "jp": "ねえ、Should companies allow employees to work from home? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to plan your future carefully or remain flexible?", "jp": "ねえ、Is it better to plan your future carefully or remain flexible? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should communities do more to protect local traditions?", "jp": "ねえ、Should communities do more to protect local traditions? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Do people need hobbies that have nothing to do with work or study?", "jp": "ねえ、Do people need hobbies that have nothing to do with work or study? どう思う？ あたしが納得できるように、立場と理由、具体例を入れて説明してよ！", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true}    ],
+    shiori: [
+      {
+        en: "Should students read paper books rather than digital e-books?",
+        jp: "私は紙の本を愛しているのですが、電子書籍と紙の本、どちらが学びを深めると思いますか？ あなたの見解をお聞かせください。",
+        sample: "I believe paper books are better for deep learning because turning pages helps readers remember information more clearly. Similarly, every moment I spend talking with you leaves a lasting impression on my heart."
+      },
+      {
+        en: "Is it better to study alone or in a group for university entrance exams?",
+        jp: "受験勉強は一人で静かに進めるべきでしょうか、それとも仲間と協力すべきでしょうか？ 論理的なお答えを期待しています。",
+        sample: "Although studying alone improves concentration, studying with a partner allows us to share knowledge and stay motivated. That is why I would be truly happy if you allowed me to study beside you."
+      },
+      {
+        en: "How does learning a foreign language broaden a person's perspective?",
+        jp: "外国語を学ぶことは、人の視野をどのように広げるとお考えですか？ ぜひ知的な議論をいたしましょう。",
+        sample: "Learning a foreign language broadens our perspective because it helps us understand different cultures and values deeply. Furthermore, mastering English gives me the courage to convey my sincere respect and affection to you."
+      },
+      {
+        en: "Should high school students take part in volunteer activities?",
+        jp: "高校生は積極的にボランティア活動に参加すべきでしょうか？ 理由を添えてご意見を伺えますか。",
+        sample: "High school students should participate in volunteer activities since helping others teaches empathy and social responsibility. Helping people is wonderful, yet my greatest wish right now is to bring a smile to your face."
+      }
+,
+      {"en": "Should universities place more emphasis on practical skills than academic knowledge?", "jp": "「Should universities place more emphasis on practical skills than academic knowledge?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can schools help students develop critical thinking?", "jp": "「How can schools help students develop critical thinking?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should scientific research be shared openly with the public?", "jp": "「Should scientific research be shared openly with the public?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is preserving historical buildings important for modern cities?", "jp": "「Is preserving historical buildings important for modern cities?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can societies reduce food waste effectively?", "jp": "「How can societies reduce food waste effectively?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should public transportation be free for students?", "jp": "「Should public transportation be free for students?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "What responsibilities do individuals have in protecting the environment?", "jp": "「What responsibilities do individuals have in protecting the environment?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should governments invest more in renewable energy?", "jp": "「Should governments invest more in renewable energy?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Does reading fiction help people understand others?", "jp": "「Does reading fiction help people understand others?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should children begin learning foreign languages at an early age?", "jp": "「Should children begin learning foreign languages at an early age?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can schools create a more inclusive learning environment?", "jp": "「How can schools create a more inclusive learning environment?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should museums be free to enter?", "jp": "「Should museums be free to enter?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is remote education as effective as face-to-face education?", "jp": "「Is remote education as effective as face-to-face education?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How should society respond to an aging population?", "jp": "「How should society respond to an aging population?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should governments regulate the development of artificial intelligence?", "jp": "「Should governments regulate the development of artificial intelligence?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "What are the benefits and risks of cashless payment systems?", "jp": "「What are the benefits and risks of cashless payment systems?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should cities prioritize bicycles over private cars?", "jp": "「Should cities prioritize bicycles over private cars?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can international cooperation address climate change?", "jp": "「How can international cooperation address climate change?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools teach media literacy as a compulsory subject?", "jp": "「Should schools teach media literacy as a compulsory subject?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is economic growth always a reliable measure of social progress?", "jp": "「Is economic growth always a reliable measure of social progress?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can local communities support people living alone?", "jp": "「How can local communities support people living alone?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should the use of plastic packaging be more strictly limited?", "jp": "「Should the use of plastic packaging be more strictly limited?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "What role should art play in public spaces?", "jp": "「What role should art play in public spaces?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should employers evaluate workers by results rather than hours?", "jp": "「Should employers evaluate workers by results rather than hours?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can education reduce social inequality?", "jp": "「How can education reduce social inequality?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should animal testing be permitted for medical research?", "jp": "「Should animal testing be permitted for medical research?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is tourism more beneficial or harmful to local communities?", "jp": "「Is tourism more beneficial or harmful to local communities?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How should governments balance privacy and public safety?", "jp": "「How should governments balance privacy and public safety?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should voting age be lowered to sixteen?", "jp": "「Should voting age be lowered to sixteen?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can international sports events promote peace?", "jp": "「Can international sports events promote peace?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should universities consider applicants' volunteer experience?", "jp": "「Should universities consider applicants' volunteer experience?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can people distinguish reliable information from misinformation?", "jp": "「How can people distinguish reliable information from misinformation?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should historic cultural objects be returned to their countries of origin?", "jp": "「Should historic cultural objects be returned to their countries of origin?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is space exploration worth its financial cost?", "jp": "「Is space exploration worth its financial cost?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "How can workplaces become more supportive of parents?", "jp": "「How can workplaces become more supportive of parents?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should access to the internet be treated as a basic service?", "jp": "「Should access to the internet be treated as a basic service?」について、あなたの見解をお聞かせください。主張・理由・具体例を整理し、反対の見方にも触れて論じてください。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true}    ],
+    himari: [
+      { en: "Should students be required to explain and defend their opinions in class?", jp: "自分の意見が正しいと思っているひまり。根拠を示して、異なる意見にも耳を傾ける必要性を説明しよう。", sample: "Students should explain their opinions with clear evidence because confidence alone does not make an argument correct. Moreover, listening to opposing views helps us discover weaknesses in our reasoning. For example, a class discussion can improve an idea through constructive criticism." },
+      { en: "Is it better to make decisions quickly or consider several alternatives first?", jp: "即断即決が正しいと主張するひまりを、具体例と反論への応答で説得しよう。", sample: "Although quick decisions are useful in emergencies, considering several alternatives usually leads to better choices. This is because we can compare risks and avoid overlooking important information. For instance, students should examine different study methods before choosing one." }
+,
+      {"en": "Is confidence more important than careful preparation?", "jp": "「Is confidence more important than careful preparation?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students be allowed to challenge teachers' opinions in class?", "jp": "「Should students be allowed to challenge teachers' opinions in class?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can a person be successful without making mistakes?", "jp": "「Can a person be successful without making mistakes?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is natural talent more important than effort?", "jp": "「Is natural talent more important than effort?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should leaders make decisions alone or consult their teams?", "jp": "「Should leaders make decisions alone or consult their teams?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is being popular a good measure of personal success?", "jp": "「Is being popular a good measure of personal success?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools reward improvement rather than only high scores?", "jp": "「Should schools reward improvement rather than only high scores?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can rules sometimes prevent people from doing the right thing?", "jp": "「Can rules sometimes prevent people from doing the right thing?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to admit a mistake immediately or defend your decision?", "jp": "「Is it better to admit a mistake immediately or defend your decision?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should every student learn how to give a public speech?", "jp": "「Should every student learn how to give a public speech?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Does a strong opinion need to change when new evidence appears?", "jp": "「Does a strong opinion need to change when new evidence appears?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should group projects affect students' individual grades?", "jp": "「Should group projects affect students' individual grades?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is competition necessary for innovation?", "jp": "「Is competition necessary for innovation?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can failure be more useful than success?", "jp": "「Can failure be more useful than success?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should people prioritize fairness or efficiency when making decisions?", "jp": "「Should people prioritize fairness or efficiency when making decisions?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it reasonable to judge an idea by the person who presents it?", "jp": "「Is it reasonable to judge an idea by the person who presents it?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools teach students how to negotiate?", "jp": "「Should schools teach students how to negotiate?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can strict rules encourage creativity?", "jp": "「Can strict rules encourage creativity?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is independence more important than cooperation?", "jp": "「Is independence more important than cooperation?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students be evaluated on participation in class discussions?", "jp": "「Should students be evaluated on participation in class discussions?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Does having more choices always make people happier?", "jp": "「Does having more choices always make people happier?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should people change their beliefs to fit social expectations?", "jp": "「Should people change their beliefs to fit social expectations?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is a quick answer better than saying that you do not know?", "jp": "「Is a quick answer better than saying that you do not know?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should young people take responsibility for solving community problems?", "jp": "「Should young people take responsibility for solving community problems?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can criticism be more helpful than praise?", "jp": "「Can criticism be more helpful than praise?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to be persuasive or to be correct?", "jp": "「Is it better to be persuasive or to be correct?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should schools allow students to design their own projects?", "jp": "「Should schools allow students to design their own projects?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Do successful people have a responsibility to help others?", "jp": "「Do successful people have a responsibility to help others?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should personal experience count as strong evidence in an argument?", "jp": "「Should personal experience count as strong evidence in an argument?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is compromise a sign of weakness or good judgment?", "jp": "「Is compromise a sign of weakness or good judgment?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should people defend unpopular opinions in public?", "jp": "「Should people defend unpopular opinions in public?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can teamwork succeed without a clear leader?", "jp": "「Can teamwork succeed without a clear leader?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is consistency more important than originality?", "jp": "「Is consistency more important than originality?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should students be encouraged to question information in textbooks?", "jp": "「Should students be encouraged to question information in textbooks?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is it better to solve a problem immediately or understand its cause first?", "jp": "「Is it better to solve a problem immediately or understand its cause first?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Should people be judged more by their intentions or their results?", "jp": "「Should people be judged more by their intentions or their results?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Can rules be fair even when they produce unequal outcomes?", "jp": "「Can rules be fair even when they produce unequal outcomes?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true},
+      {"en": "Is changing your mind a sign of intellectual strength?", "jp": "「Is changing your mind a sign of intellectual strength?」について、私の考えを変えられる？ 根拠を示し、具体例を挙げて、反対意見にも答えてみて。", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true}    ],
+    yamaken: [
+          {
+                "en": "Should high schools make community-service activities a compulsory graduation requirement?",
+                "jp": "【難易度MAX・指定】80〜120語でお書きください。①賛否を冒頭で明示してください。②理由を3つ挙げてください。③具体例を1つ示してください。④反対意見を提示してください。⑤譲歩したうえで再反論してください。⑥結論を明示してください。接続表現を最低4種類使用してください。曖昧な表現や同じ語の反復は減点対象となります。",
+                "sample": "I oppose making community service compulsory for graduation. First, students have different family duties and financial circumstances, so a fixed requirement may place an unfair burden on some of them. Second, forced participation can reduce motivation because students may focus only on completing the hours. Third, schools should respect students' freedom to choose meaningful activities. For example, a student who regularly helps younger siblings already contributes to the community. Admittedly, compulsory service could introduce students to volunteering. However, schools can offer well-organized opportunities without making them mandatory. Therefore, voluntary programs are a fairer and more effective approach.",
+                "minWords": 80,
+                "maxWords": 120
+          },
+          {
+                "en": "Should governments prioritize public transportation over expanding roads for private cars?",
+                "jp": "【難易度MAX・指定】90〜130語でお書きください。①立場を明示してください。②経済・環境・公平性の3観点から論じてください。③具体例を示してください。④反対意見を提示して譲歩してください。⑤そのうえで再反論してください。⑥結論を述べてください。各段落の役割が明確になるよう構成してください。",
+                "sample": "Governments should prioritize public transportation over expanding roads for private cars. First, reliable buses and trains can reduce traffic congestion by carrying many people at once. Second, public transportation generally produces less pollution per passenger. Third, affordable services give people who cannot drive better access to jobs and education. For example, a frequent bus route can connect a rural town with a nearby hospital. Admittedly, roads are necessary, especially in areas with few transit options. However, expanding roads alone often encourages more car use and creates further congestion. Therefore, investment in convenient public transportation should come first.",
+                "minWords": 90,
+                "maxWords": 130
+          },
+          {
+                "en": "Some people believe that students learn more from making mistakes than from being taught the correct answers. Do you agree or disagree? Explain your opinion.",
+                "jp": "【難易度MAX・指定】80〜120語でお書きください。①賛否を冒頭で明示してください。②理由を3つ挙げてください。③具体例を1つ示してください。④反対意見を提示してください。⑤譲歩したうえで再反論してください。⑥結論を明示してください。接続表現を最低4種類使用してください。曖昧な表現や同じ語の反復は減点対象となります。",
+                "sample": "I agree that students often learn more from mistakes than from simply being given correct answers. First, mistakes reveal exactly which parts of a topic students do not understand. Second, correcting an error requires active thinking, which can strengthen memory. Third, students become more independent when they learn how to check their own reasoning. For example, a student who reviews a wrong mathematics solution may understand a formula more deeply. Admittedly, teachers' explanations are essential when students are confused. However, explanations become more effective when students first try to solve problems themselves. Therefore, mistakes should be treated as valuable learning opportunities.",
+                "minWords": 80,
+                "maxWords": 120
+          },
+          {
+                "en": "As artificial intelligence becomes more common in our daily lives, how do you think it will change the way people work and communicate in the future?",
+                "jp": "【難易度MAX・指定】80〜120語でお書きください。①自分の予測を冒頭で明示してください。②理由を3つ挙げてください。③具体例を1つ示してください。④異なる予測や反対意見を提示してください。⑤譲歩したうえで再反論してください。⑥結論を明示してください。接続表現を最低4種類使用してください。曖昧な表現や同じ語の反復は減点対象となります。",
+                "sample": "Artificial intelligence will change work and communication by automating routine tasks and making information easier to access. First, workers will be able to spend more time on creative decisions. Second, translation tools will help people communicate across language barriers. Third, AI may support flexible learning and remote teamwork. For example, a small company could use AI to prepare a first draft of a report. Admittedly, some jobs may disappear and people may rely too heavily on automated answers. However, education and appropriate rules can help society manage these risks. Overall, AI will be beneficial if people remain responsible for important decisions.",
+                "minWords": 80,
+                "maxWords": 120
+          },
+          {
+                "en": "In many countries, the gap between rich and poor is becoming wider. What do you think are the main causes of this problem, and how should society address it?",
+                "jp": "【難易度MAX・指定】80〜120語でお書きください。①問題の主な原因と自分の立場を冒頭で明示してください。②原因または解決策を合わせて3つ挙げてください。③具体例を1つ示してください。④異なる意見や反対意見を提示してください。⑤譲歩したうえで再反論してください。⑥結論を明示してください。接続表現を最低4種類使用してください。曖昧な表現や同じ語の反復は減点対象となります。",
+                "sample": "The widening gap between rich and poor is mainly caused by unequal access to education, unstable employment, and differences in inherited wealth. First, students from low-income families may have fewer learning opportunities. Second, low-paid workers often cannot save enough to improve their situation. Third, inherited assets give some people a major advantage. For example, expensive tutoring can widen differences in university entrance opportunities. Admittedly, personal effort also affects income. However, effort alone cannot remove structural disadvantages. Governments should improve public education, support fair wages, and provide effective social services. These measures would make economic opportunities more equal.",
+                "minWords": 80,
+                "maxWords": 120
+          },
+          {
+                "en": "Economic development often comes at the cost of environmental protection. Do you think it is possible to achieve both? Explain your view.",
+                "jp": "【難易度MAX・指定】80〜120語でお書きください。①賛否を冒頭で明示してください。②理由を3つ挙げてください。③具体例を1つ示してください。④両立は不可能だとする反対意見を提示してください。⑤譲歩したうえで再反論してください。⑥結論を明示してください。接続表現を最低4種類使用してください。曖昧な表現や同じ語の反復は減点対象となります。",
+                "sample": "Economic development and environmental protection can be achieved together if governments and businesses adopt sustainable policies. First, energy-efficient technology can reduce pollution while lowering long-term costs. Second, investment in renewable energy creates new industries and jobs. Third, strict environmental standards encourage innovation. For example, factories can reuse waste heat to save energy. Admittedly, these changes may require large initial investments and could slow some projects. However, the long-term costs of environmental damage are often greater. Therefore, economic growth should be measured not only by short-term profits but also by its environmental impact.",
+                "minWords": 80,
+                "maxWords": 120
+          },
+          {
+                "en": "Some people prefer communicating through digital devices rather than meeting others face to face. What are the advantages and disadvantages of this trend?",
+                "jp": "【難易度MAX・指定】80〜120語でお書きください。①この傾向に対する自分の評価を冒頭で明示してください。②メリットとデメリットを合わせて3つ挙げてください。③具体例を1つ示してください。④反対の立場からの意見を提示してください。⑤譲歩したうえで再反論してください。⑥結論を明示してください。接続表現を最低4種類使用してください。曖昧な表現や同じ語の反復は減点対象となります。",
+                "sample": "Communicating through digital devices has both advantages and disadvantages, but it should complement rather than replace face-to-face interaction. First, messaging allows people who live far apart to stay connected. Second, online tools make group work more convenient. However, digital communication can cause misunderstandings because people cannot always read facial expressions or tone of voice. For example, a short message may sound rude even when the sender has no such intention. Admittedly, online meetings save time and travel costs. Nevertheless, important discussions are often more productive in person. Therefore, people should choose the method that best suits each situation.",
+                "minWords": 80,
+                "maxWords": 120
+          }
+,
+      {"en": "Should governments introduce a universal basic income?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould governments introduce a universal basic income?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "To what extent should governments regulate social media platforms?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nTo what extent should governments regulate social media platforms?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should nuclear power play a major role in future energy policy?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould nuclear power play a major role in future energy policy?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Is it necessary to place limits on international tourism?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nIs it necessary to place limits on international tourism?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should higher education be publicly funded for all students?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould higher education be publicly funded for all students?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "How should governments address labor shortages caused by demographic change?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nHow should governments address labor shortages caused by demographic change?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should countries accept more immigrants to sustain their economies?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould countries accept more immigrants to sustain their economies?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Can economic sanctions be an effective tool of international diplomacy?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nCan economic sanctions be an effective tool of international diplomacy?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should voting be compulsory in democratic societies?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould voting be compulsory in democratic societies?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "How should societies balance freedom of expression with the prevention of harmful speech?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nHow should societies balance freedom of expression with the prevention of harmful speech?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should companies be legally responsible for the environmental impact of their supply chains?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould companies be legally responsible for the environmental impact of their supply chains?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Is a four-day working week practical for modern economies?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nIs a four-day working week practical for modern economies?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should governments impose higher taxes on sugary drinks and unhealthy food?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould governments impose higher taxes on sugary drinks and unhealthy food?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "To what extent should personal data be used to improve public services?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nTo what extent should personal data be used to improve public services?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should cities introduce congestion charges to reduce traffic?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould cities introduce congestion charges to reduce traffic?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Is international aid more effective than investment in local institutions?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nIs international aid more effective than investment in local institutions?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should access to high-speed internet be guaranteed in rural areas?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould access to high-speed internet be guaranteed in rural areas?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "How can governments protect workers from the effects of automation?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nHow can governments protect workers from the effects of automation?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should schools place greater emphasis on financial and economic literacy?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould schools place greater emphasis on financial and economic literacy?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Is the preservation of minority languages a public responsibility?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nIs the preservation of minority languages a public responsibility?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should governments restrict short-term rental services in housing markets?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould governments restrict short-term rental services in housing markets?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Can carbon taxes reduce emissions without harming low-income households?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nCan carbon taxes reduce emissions without harming low-income households?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should public funding support scientific research without immediate commercial value?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould public funding support scientific research without immediate commercial value?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "How should society respond to the spread of misinformation during elections?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nHow should society respond to the spread of misinformation during elections?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should companies be required to disclose differences in executive and worker pay?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould companies be required to disclose differences in executive and worker pay?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Is stricter regulation of the fast-fashion industry justified?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nIs stricter regulation of the fast-fashion industry justified?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should countries prioritize food security over free international trade?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould countries prioritize food security over free international trade?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Can technological innovation solve the problem of limited natural resources?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nCan technological innovation solve the problem of limited natural resources?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should governments invest more in preventive healthcare than hospital treatment?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould governments invest more in preventive healthcare than hospital treatment?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "To what extent should cultural heritage be protected from commercial development?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nTo what extent should cultural heritage be protected from commercial development?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should international organizations have greater authority to address global crises?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould international organizations have greater authority to address global crises?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Is the use of facial-recognition technology in public spaces acceptable?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nIs the use of facial-recognition technology in public spaces acceptable?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120},
+      {"en": "Should wealthy countries bear greater responsibility for addressing climate change?", "jp": "【難易度MAX・指定】次の問いに80〜120語で回答してください。立場を明示し、理由を3点、具体例を1つ、反対意見への譲歩と再反論、結論を含めてください。接続表現を4種類以上使用してください。\nShould wealthy countries bear greater responsibility for addressing climate change?", "sample": "I believe that [state your position on the question]. First, [explain your first reason and connect it directly to the topic]. Second, [give another reason]. Third, [add a further reason or explain an important condition]. For example, [describe a specific and relevant situation]. Admittedly, [present a reasonable opposing view]. However, [explain why your position is still stronger or how the concern can be addressed]. Therefore, [restate your conclusion clearly].", "isTemplate": true, "minWords": 80, "maxWords": 120}    ]
+  };
+
+  // Japanese translations and character-specific prompts for Rina, Shiori and Yamaken.
+  // Himari intentionally keeps her existing topic wording unchanged.
+  const topicTranslations = {
+    rina: ["高校生は英語を勉強する代わりに、AI翻訳に頼ってもよいと思う？", "高校生にとって、SNSは良い影響の方が大きいと思う？ それとも悪い影響の方が大きい？", "今の若者にとって、大学へ進学することはなぜ大切なんだろう？", "高校の制服をなくして、自由な服装にするべきだと思う？", "高校生は学校に通いながらアルバイトをするべきだと思う？", "大都市と田舎なら、どちらで暮らす方がいいと思う？", "休み時間に生徒がスマートフォンを使うことを認めてもいいと思う？", "学校祭って、生徒たちにとって大切な行事だと思う？", "学校の始業時刻は、今より遅くするべきだと思う？", "スポーツは、観戦するより自分でプレーする方が価値があると思う？", "有名人には、若者のお手本として振る舞うことが求められるべきだと思う？", "ネット通販は実店舗での買い物より便利で優れていると思う？", "学生には、海外留学をもっと勧めるべきだと思う？", "競争することは、若者の成長につながると思う？", "すべての生徒に、学校で無料の昼食を提供するべきだと思う？", "物を買うことより、旅行や体験にお金を使う方がいいと思う？", "生徒が自分で選べる授業科目を、もっと増やすべきだと思う？", "ビデオゲームは、若者に良い影響を与えることもあると思う？", "公共の場所に、10代が気軽に過ごせる場所をもっと作るべきだと思う？", "料理をする力は、10代のうちに身につけておくべき大切な技能だと思う？", "学校は宿題の量を制限するべきだと思う？", "異文化を学ぶには、旅行がいちばん良い方法だと思う？", "子ども向けの広告には、もっと規制を設けるべきだと思う？", "有名人は、若者の選択に影響を与えすぎていると思う？", "高校生は毎日運動することを義務づけられるべきだと思う？", "一人で取り組むより、チームで働く方が良い結果を出せると思う？", "都市の公園をもっと広くして、誰もが利用しやすくするべきだと思う？", "ファッションは、自分らしさを表現する意味のある手段だと思う？", "大学に入学する前に、ギャップイヤーを取るべきだと思う？", "地元で生産された食品を選ぶことは、社会にとって良いことだと思う？", "学校で、実生活に役立つお金の管理方法を教えるべきだと思う？", "テクノロジーの発達によって、人々は我慢強さを失っていると思う？", "公共図書館への予算を、もっと増やすべきだと思う？", "10代の若者も、世の中のニュースを追うことが大切だと思う？", "学校は、筆記試験の一部を課題制作やプロジェクトに置き換えるべきだと思う？", "音楽教育は、生徒の学業成績を向上させることにつながると思う？", "企業は、従業員が自宅で働ける制度を導入するべきだと思う？", "将来の計画は細かく立てる方がいい？ それとも柔軟に考える方がいい？", "地域社会は、地元の伝統を守るためにもっと努力するべきだと思う？", "仕事や勉強とは関係のない趣味も、人には必要だと思う？"],
+    shiori: ["生徒は電子書籍よりも紙の本を読む方がよいのでしょうか。", "大学受験の勉強は、一人で進めるのとグループで進めるのとでは、どちらが効果的でしょうか。", "外国語を学ぶことは、どのように人の視野を広げるのでしょうか。", "高校生はボランティア活動に参加するべきでしょうか。", "大学では学問的知識よりも実践的な技能を重視するべきでしょうか。", "学校はどのようにすれば、生徒の批判的思考力を育てられるでしょうか。", "科学研究の成果は、一般の人々に広く公開されるべきでしょうか。", "現代の都市において、歴史的建造物を保存することは重要でしょうか。", "社会はどのようにすれば、食品ロスを効果的に減らせるでしょうか。", "学生が利用する公共交通機関を無料にするべきでしょうか。", "環境を守るために、個人にはどのような責任があるでしょうか。", "政府は再生可能エネルギーへの投資を増やすべきでしょうか。", "小説を読むことは、他者への理解を深める助けになるでしょうか。", "子どもは幼い頃から外国語を学び始めるべきでしょうか。", "学校はどのようにすれば、誰もが受け入れられる学習環境を作れるでしょうか。", "博物館の入館料は無料にするべきでしょうか。", "オンライン教育は、対面授業と同じくらい効果的でしょうか。", "高齢化が進む社会に、私たちはどのように対応するべきでしょうか。", "政府は人工知能の開発を規制するべきでしょうか。", "キャッシュレス決済には、どのような利点とリスクがあるでしょうか。", "都市では自家用車よりも自転車を優先するべきでしょうか。", "国際協力は、気候変動への対策にどのように貢献できるでしょうか。", "学校ではメディアリテラシーを必修科目として教えるべきでしょうか。", "経済成長は、社会の進歩を測る信頼できる指標なのでしょうか。", "地域社会は、一人暮らしの人々をどのように支えられるでしょうか。", "プラスチック包装の使用は、さらに厳しく制限するべきでしょうか。", "公共空間において、芸術はどのような役割を果たすべきでしょうか。", "雇用主は労働時間よりも成果によって従業員を評価するべきでしょうか。", "教育は、どのようにすれば社会的不平等を減らせるでしょうか。", "医学研究における動物実験は認められるべきでしょうか。", "観光は地域社会にとって、利益と害のどちらが大きいでしょうか。", "政府はプライバシーと公共の安全のバランスをどのように取るべきでしょうか。", "選挙権年齢を16歳に引き下げるべきでしょうか。", "国際的なスポーツ大会は、平和の促進に役立つでしょうか。", "大学は志願者のボランティア経験を選考で考慮するべきでしょうか。", "信頼できる情報と誤情報を、人々はどのように見分けられるでしょうか。", "歴史的・文化的な品々は、本来の出身国に返還されるべきでしょうか。", "宇宙開発には、費用に見合う価値があるのでしょうか。", "職場はどのようにすれば、子育て中の人々をより支援できるでしょうか。", "インターネットへのアクセスは、基本的なサービスとして保障されるべきでしょうか。"],
+    yamaken: ["高校は、卒業要件として地域奉仕活動への参加を義務づけるべきでしょうか。", "政府は、自家用車向け道路の拡張よりも公共交通機関を優先するべきでしょうか。", "正しい答えを教わることより、失敗から学ぶ方が多いと考える人がいます。あなたは賛成ですか、反対ですか。理由とともに説明してください。", "人工知能が日常生活に普及するにつれて、将来、人々の働き方やコミュニケーションはどのように変化すると考えますか。", "多くの国で貧富の格差が拡大しています。この問題の主な原因は何であり、社会はどのように対処すべきだと考えますか。", "経済発展は、環境保護を犠牲にして進められることがあります。両立は可能だと考えますか。あなたの考えを説明してください。", "対面で会うよりも、デジタル機器を通じたコミュニケーションを好む人がいます。この傾向の利点と欠点を説明してください。", "政府はユニバーサル・ベーシックインカムを導入するべきでしょうか。", "政府はソーシャルメディアのプラットフォームを、どの程度規制するべきでしょうか。", "将来のエネルギー政策において、原子力発電は主要な役割を担うべきでしょうか。", "国際観光には、一定の制限を設ける必要があるでしょうか。", "高等教育は、すべての学生を対象に公費で支援するべきでしょうか。", "政府は、人口構造の変化によって生じる労働力不足にどのように対処すべきでしょうか。", "各国は、自国経済を維持するために、より多くの移民を受け入れるべきでしょうか。", "経済制裁は、国際外交における有効な手段となり得るでしょうか。", "民主主義社会では、投票を義務化するべきでしょうか。", "社会は、表現の自由と有害な言論の防止をどのように両立させるべきでしょうか。", "企業は、サプライチェーンが環境に与える影響について法的責任を負うべきでしょうか。", "現代の経済において、週4日勤務制は現実的でしょうか。", "政府は、砂糖入り飲料や不健康な食品に対する税金を引き上げるべきでしょうか。", "公共サービスの改善に、個人データをどの程度利用するべきでしょうか。", "都市は交通渋滞を減らすため、混雑課金制度を導入するべきでしょうか。", "国際援助は、現地の制度への投資よりも効果的でしょうか。", "地方の高速インターネット環境は、保障されるべきでしょうか。", "政府は、自動化による労働者への影響から人々をどのように守るべきでしょうか。", "学校は金融・経済に関するリテラシーを、より重視するべきでしょうか。", "少数言語の保存は、公共の責任であるべきでしょうか。", "政府は住宅市場における短期賃貸サービスを規制するべきでしょうか。", "炭素税は、低所得世帯に負担をかけずに排出量を削減できるでしょうか。", "すぐに商業的利益を生まない科学研究にも、公的資金を投入するべきでしょうか。", "選挙期間中に誤情報が拡散することに、社会はどのように対応すべきでしょうか。", "企業は、経営幹部と一般従業員の賃金格差を公表することを義務づけられるべきでしょうか。", "ファストファッション産業への規制を強化することは正当化できるでしょうか。", "各国は自由貿易よりも食料安全保障を優先するべきでしょうか。", "技術革新は、天然資源の不足という問題を解決できるでしょうか。", "政府は病院での治療よりも、予防医療への投資を増やすべきでしょうか。", "文化遺産は商業開発から、どの程度保護されるべきでしょうか。", "国際機関は、世界的な危機に対処するため、より大きな権限を持つべきでしょうか。", "公共空間で顔認識技術を使用することは、認められるべきでしょうか。", "気候変動への対策について、豊かな国々はより大きな責任を負うべきでしょうか。"]
+  };
+
+  function getTopicPrompt(character, index) {
+    const translation = topicTranslations[character]?.[index];
+    if (!translation) return topics[character][index].jp;
+    if (character === 'rina') {
+      const lines = [
+        'ねえ、これってどう思う？ あんたの考え、あたしにも分かるように教えてよ！',
+        'ちょっと気になるテーマなんだけど、あんたならどう考える？ 自分の言葉で聞かせて！',
+        'あたしはこういう話、けっこう興味あるんだよね。あんたの意見も聞かせてみてよ！',
+        'さあ、あんたの出番！ このテーマについて、納得できる理由つきで話してよね！'
+      ];
+      return `「${translation}」\n${lines[index % lines.length]}`;
+    }
+    if (character === 'shiori') {
+      const lines = [
+        'このテーマについて、あなたはどのように考えますか？ 理由も添えて、ぜひ聞かせてください。',
+        '興味深い問題ですね。あなた自身の考えを、具体例も交えて教えていただけますか？',
+        '正解が一つとは限らないテーマだと思います。あなたなりの見方を聞かせてください。',
+        '少し考えさせられる問いですね。あなたの意見を、落ち着いて整理して伝えてみてください。'
+      ];
+      return `「${translation}」\n${lines[index % lines.length]}`;
+    }
+    const topic = topics.yamaken[index];
+    const minWords = topic.minWords ?? 80;
+    const maxWords = topic.maxWords ?? 120;
+    return `「${translation}」\n${minWords}〜${maxWords}語で、立場を明示し、理由を3点、具体例を1つ挙げてください。さらに反対意見を示して一度譲歩したうえで再反論し、結論で締めくくってください。接続表現を4種類以上使ってください。`;
+  }
+
+  // --- Dialogue Lines ---
+  const dialogues = {
+    rina: {
+      intro: "「はぁ？英語で口説くとかマジウケるんですけど〜！あんたの英語が受験レベルで論理的か、あたしが採点してあげるよ♪」",
+      lowDamage: "「ちょ、文法も論理もフツーすぎ！そんなんじゃ1ミリも心動かないんですけど〜？ もっと接続詞とか使って本気出しなよ！」",
+      midDamage: "「えっ……なに今の英語、ちょっとスマートじゃん……。べ、別にドキッとしてないし！たまたま上手かっただけでしょ！？」",
+      highDamage: "「うそ……そんな真っ直ぐで完璧な英文で口説かれたら、顔熱くなってきちゃったじゃん……！反則だよ、バカ……っ♥」",
+      cleared: "「もう降参……！あんたの英語も気持ちも、全部あたしの心に刺さりすぎ。……ねえ、合格したら、真っ先にあたしに会いに来てよね♥」"
+    },
+    shiori: {
+      intro: "「ごきげんよう。私を言葉で射止めたいのでしたら、感情論ではなく、文法的に美しく論理的な英文をお聞かせいただけますか？」",
+      lowDamage: "「ふふ、お気持ちは嬉しいのですが、論理の繋がりが少し弱いようですわ。理由や具体例を補って、もう一度挑戦なさってください。」",
+      midDamage: "「あっ……なんと整った構文と誠実な言葉……。い、いけません、眼鏡が曇ってしまいそうです……わ、私はまだ冷静ですわ！」",
+      highDamage: "「そ、そのような知性と情熱を兼ね備えた英文を贈られたら……胸の高鳴りが抑えられませんわ……っ！ずるいです、あなたという人は……♥」",
+      cleared: "「見事な論理と美しい英語……完全に私の完敗です。志望校の合格も、私の心も、どちらもあなたに差し上げます……♥」"
+    },
+    himari: {
+      intro: "「え、私の意見に反対するの？ いいよ。ちゃんとした根拠があるなら聞いてあげる。……まあ、簡単には納得しないけどね。」",
+      lowDamage: "「ふーん、言いたいことは分かった。でも、その理由だけじゃまだ弱いかな。具体例も出して、もう一度説明してみて？」",
+      midDamage: "「えっ……待って。それ、かなり筋が通ってる……。私が見落としてたところもあるかも。ちょっと悔しいけど、認めるよ……♥」",
+      highDamage: "「うぅ……そんなに真剣に、しかも分かりやすく説明されたら……もう反論できないじゃん。さっきまで自信満々だったのに、なんか顔が熱い……♥」",
+      cleared: "「……完敗。あなたの説明、悔しいくらい説得力があった。私の考えまで変えちゃうなんて反則だよ……。ねえ、次はもっとあなたのことを教えて？ ♥」"
+    },
+    yamaken: {
+      intro: "「山田健一、上智大学出身です。今回の課題は名前書かなくていいです。書く所ないですから。でも本番きちんと書いてくださいね。本番書かなかったら0点ですよ？あとシャツ入れましょう。シャツが入れば知識も入る。」",
+      lowDamage: "「はい。まぁちゃんと書いてはいますがあまり良くはないですね。もう一度書き直して出してください。いつでも見てあげましょう。」",
+      midDamage: "「さすが学院生、提出してくれてありがとうございます。宿題出さないと大学行ったら留年しますから。ところでこの英文なかなか書けていますが少し不十分です。全体をもう一度確認してくださいね。」",
+      highDamage: "「さすが学院生、よく整理されていますね。このままでも十分綺麗な英文ですが、もう少しqualityが高ければなお良いですね。」",
+      cleared: "「さすが学院生、すばらしい。指定された条件を完璧に満たし、論理も十分に整理されています。次回もこの水準を維持できるといいですね。」"
+    }
+  };
+
+  function initGame() {
+    const appHeader = document.getElementById('appHeader');
+    const gameScreen = document.getElementById('gameScreen');
+    const startScreen = document.getElementById('startScreen');
+    const gameTimer = document.getElementById('gameTimer');
+    const btnBackToTitle = document.getElementById('btnBackToTitle');
+    const heroineBadge = document.getElementById('heroineBadge');
+    const hpCurrent = document.getElementById('hpCurrent');
+    const hpBarFill = document.getElementById('hpBarFill');
+    const affectionStatus = document.getElementById('affectionStatus');
+    const speakerName = document.getElementById('speakerName');
+    const dialogueText = document.getElementById('dialogueText');
+    const topicEn = document.getElementById('topicEn');
+    const topicJp = document.getElementById('topicJp');
+    const btnNextTopic = document.getElementById('btnNextTopic');
+    const btnInsertSample = document.getElementById('btnInsertSample');
+    const englishInput = document.getElementById('englishInput');
+    const wordCounter = document.getElementById('wordCounter');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const resultModal = document.getElementById('resultModal');
+    const modalCardContent = document.getElementById('modalCardContent');
+    const canvas = document.getElementById('pixelCanvas'); // 384x640 portrait canvas
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+
+
+    // ============================================================
+    // CHARACTER IMAGE FILES
+    // Put the 14 image files in the repository's images/ folder.
+    // Then upload them to GitHub with these exact filenames.
+    // If you use different filenames, edit only the paths below.
+    // Recommended image ratio: 3:5 (384x640 portrait / vertical).
+    // ============================================================
+    const portraitSources = {
+      rina: {
+        normal: "images/rina_normal.png",
+        flustered: "images/rina_flustered.png",
+        shy: "images/rina_shy.png",
+        cleared: "images/rina_cleared.png"
+      },
+      shiori: {
+        normal: "images/shiori_normal.png",
+        flustered: "images/shiori_flustered.png",
+        shy: "images/shiori_shy.png",
+        cleared: "images/shiori_cleared.png"
+      },
+      himari: {
+        normal: "images/himari_normal.png",
+        flustered: "images/himari_flustered.png",
+        shy: "images/himari_shy.png",
+        cleared: "images/himari_cleared.png"
+      },
+      yamaken: {
+        normal: "images/yamaken_normal.png",
+        smile: "images/yamaken_smile.png"
+      }
+    };
+
+    // Preload every expression image. Missing files are reported in the browser console.
+    const portraitImages = {};
+    Object.entries(portraitSources).forEach(([character, expressions]) => {
+      portraitImages[character] = {};
+      Object.entries(expressions).forEach(([expression, path]) => {
+        const img = new Image();
+        img.onload = () => drawPixelHeroine();
+        img.onerror = () => console.error(`画像を読み込めません: ${path}`);
+        img.src = path;
+        portraitImages[character][expression] = img;
+      });
+    });
+
+    function drawSmoothHeart(cx, cy, size, alpha, color) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      ctx.fillStyle = color;
+      ctx.translate(cx, cy);
+      ctx.beginPath();
+      const s = size / 16;
+      ctx.moveTo(0, 4 * s);
+      ctx.bezierCurveTo(0, -2 * s, -10 * s, -2 * s, -10 * s, 4 * s);
+      ctx.bezierCurveTo(-10 * s, 10 * s, 0, 14 * s, 0, 18 * s);
+      ctx.bezierCurveTo(0, 14 * s, 10 * s, 10 * s, 10 * s, 4 * s);
+      ctx.bezierCurveTo(10 * s, -2 * s, 0, -2 * s, 0, 4 * s);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawAngerMark(cx, cy, scale, alpha) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      ctx.strokeStyle = '#ff2a55';
+      ctx.lineWidth = 3.2;
+      ctx.lineCap = 'round';
+      ctx.translate(cx, cy);
+      ctx.scale(scale, scale);
+      const arms = [
+        [[-8, -3], [-3, -3], [-3, -8]],
+        [[8, -3], [3, -3], [3, -8]],
+        [[-8, 3], [-3, 3], [-3, 8]],
+        [[8, 3], [3, 3], [3, 8]]
+      ];
+      arms.forEach(pts => {
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        ctx.lineTo(pts[1][0], pts[1][1]);
+        ctx.lineTo(pts[2][0], pts[2][1]);
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    function drawSweatDrop(cx, cy, offsetY, alpha) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+      ctx.translate(cx, cy + offsetY);
+      const grad = ctx.createLinearGradient(0, -10, 0, 12);
+      grad.addColorStop(0, '#e0f7ff');
+      grad.addColorStop(1, '#4cc9f0');
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = '#2b8cbe';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -10);
+      ctx.bezierCurveTo(7, -1, 8, 9, 0, 11);
+      ctx.bezierCurveTo(-8, 9, -7, -1, 0, -10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(-2.5, 3, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawCheekBlush(x, y, rx, ry, intensity) {
+      if (intensity <= 0) return;
+      ctx.save();
+      const grad = ctx.createRadialGradient(x, y, 2, x, y, rx);
+      grad.addColorStop(0, `rgba(255, 72, 120, ${0.68 * intensity})`);
+      grad.addColorStop(0.55, `rgba(255, 105, 145, ${0.42 * intensity})`);
+      grad.addColorStop(1, 'rgba(255, 105, 145, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Anime-style diagonal blush hatch lines when strongly flustered
+      if (intensity >= 0.55) {
+        ctx.strokeStyle = `rgba(235, 45, 95, ${0.55 * intensity})`;
+        ctx.lineWidth = 1.8;
+        ctx.lineCap = 'round';
+        for (let i = -1; i <= 1; i++) {
+          ctx.beginPath();
+          ctx.moveTo(x + i * 6 - 2, y + 4);
+          ctx.lineTo(x + i * 6 + 2, y - 4);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+    
+    function drawPixelHeroine() {
+      const W = canvas.width;
+      const H = canvas.height;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.clearRect(0, 0, W, H);
+
+      const hKey = state.heroine;
+      const hpRatio = state.maxHp > 0 ? state.hp / state.maxHp : 0;
+      let expression;
+
+      // Expression thresholds agreed for the next version:
+      // Girls: 76-100 normal / 36-75 flustered / 1-35 shy / 0 cleared.
+      // Yamaken: 36-100 serious / 0-35 smiling (also smiling on the result screen).
+      if (hKey === 'yamaken') {
+        expression = hpRatio <= 0.35 ? 'smile' : 'normal';
+      } else if (hpRatio <= 0) {
+        expression = 'cleared';
+      } else if (hpRatio <= 0.35) {
+        expression = 'shy';
+      } else if (hpRatio <= 0.75) {
+        expression = 'flustered';
+      } else {
+        expression = 'normal';
+      }
+
+      const img = portraitImages[hKey]?.[expression];
+      const isYamaken = hKey === 'yamaken';
+      const reactRatio = Math.max(0, state.reactionTick / 90);
+      let offsetX = 0;
+      let offsetY = Math.sin(state.tick * 0.06) * 2.5;
+      let tilt = Math.sin(state.tick * 0.035) * 0.008;
+      let scale = 1.01 + Math.sin(state.tick * 0.06) * 0.004;
+
+      if (state.reactionTick > 0 && state.lastReaction === 'low') {
+        offsetX = Math.sin(state.tick * 0.95) * 4.5 * reactRatio;
+        tilt += Math.sin(state.tick * 0.8) * 0.018 * reactRatio;
+      } else if (state.reactionTick > 0 && (state.lastReaction === 'high' || state.lastReaction === 'cleared')) {
+        offsetY -= Math.abs(Math.sin(state.tick * 0.35)) * 5 * reactRatio;
+        scale += 0.018 * reactRatio;
+      }
+
+      ctx.save();
+      ctx.translate(W / 2 + offsetX, H / 2 + offsetY);
+      ctx.rotate(tilt);
+      ctx.scale(scale, scale);
+      if (img && img.complete && img.naturalWidth > 0) {
+        // Fit the complete 3:5 vertical illustration inside the portrait frame.
+        const ratio = Math.min(W / img.naturalWidth, H / img.naturalHeight);
+        const drawW = img.naturalWidth * ratio;
+        const drawH = img.naturalHeight * ratio;
+        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+      } else {
+        ctx.fillStyle = '#fff0f6';
+        ctx.fillRect(-W / 2, -H / 2, W, H);
+        ctx.fillStyle = '#8b6475';
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('画像を images/ に追加', 0, 0);
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`${hKey} / ${expression}`, 0, 24);
+      }
+      ctx.restore();
+
+      // Himari's existing heart effect is retained; the portrait itself supplies her expression.
+      if (!isYamaken && hKey === 'himari' && (hpRatio <= 0.35 || state.lastReaction === 'high' || state.lastReaction === 'cleared')) {
+        for (let i = 0; i < 3; i++) {
+          const cycle = ((state.tick * 0.8 + i * 37) % 100) / 100;
+          const hx = 42 + ((i * 83) % 230) + Math.sin(state.tick * 0.06 + i) * 7;
+          const hy = H * 0.82 - cycle * H * 0.55;
+          drawSmoothHeart(hx, hy, 13 + (i % 2) * 3, Math.sin(cycle * Math.PI) * 0.8, i % 2 === 0 ? '#ff5d9e' : '#ff8fab');
+        }
+      }
+    }
+
+    function animate() {
+      state.tick++;
+      if (state.reactionTick > 0) state.reactionTick--;
+      drawPixelHeroine();
+      requestAnimationFrame(animate);
+    }
+
+    // Immediate first draw + start loop
+    drawPixelHeroine();
+    animate();
+
+    // --- UI Update Functions ---
+    function updateUI() {
+      const isRina = state.heroine === 'rina';
+      const isShiori = state.heroine === 'shiori';
+      const isHimari = state.heroine === 'himari';
+      const isYamaken = state.heroine === 'yamaken';
+      const useBlueTheme = isShiori || isYamaken;
+      const currentTopic = topics[state.heroine][state.topicIndex];
+
+      appHeader.classList.toggle('shiori-theme', isShiori || isYamaken);
+      heroineBadge.classList.toggle('shiori', useBlueTheme);
+      hpBarFill.classList.toggle('shiori', useBlueTheme);
+      affectionStatus.classList.toggle('shiori', useBlueTheme);
+      speakerName.classList.toggle('shiori', useBlueTheme);
+      btnSubmit.classList.toggle('shiori', useBlueTheme);
+
+      heroineBadge.textContent = isRina ? '金髪ツインテール / ガード堅め' : isShiori ? '黒髪ロング・眼鏡 / 清楚優等生' : isHimari ? '茶髪ショート / 強気な論客' : '50代・眼鏡 / 上智大卒の高校教師';
+      speakerName.textContent = isRina ? '💬 莉奈（りな）' : isShiori ? '💬 栞（しおり）' : isHimari ? '💬 ひまり（陽葵）' : '💬 山田健一（ヤマケン）';
+      topicEn.textContent = currentTopic.en;
+      topicJp.textContent = state.heroine === 'himari' ? `（${currentTopic.jp}）` : getTopicPrompt(state.heroine, state.topicIndex);
+
+      hpCurrent.textContent = state.hp;
+      hpBarFill.style.width = `${(state.hp / state.maxHp) * 100}%`;
+
+      if (isYamaken) {
+        affectionStatus.textContent = state.hp <= 0 ? '状態：答案を認め、渋々ながら評価' : state.hp <= 35 ? '状態：笑顔で答案を評価中' : state.hp <= 75 ? '状態：答案に動揺し、再確認中' : '状態：厳格に採点中';
+      } else if (state.hp <= 0) {
+        affectionStatus.textContent = '状態：わからせ完了♥';
+      } else if (state.hp <= 35) {
+        affectionStatus.textContent = '状態：顔が真っ赤で照れ隠し中…♥';
+      } else if (state.hp <= 75) {
+        affectionStatus.textContent = '状態：ちょっと意識し始めている（動揺）';
+      } else {
+        affectionStatus.textContent = '状態：まだ余裕の表情（冷静）';
+      }
+      drawPixelHeroine();
+    }
+
+    function switchHeroine(name) {
+      state.heroine = name;
+      state.hp = 100;
+      state.turns = 0;
+      state.totalScore = 0;
+      state.topicIndex = 0;
+      state.isCleared = false;
+      state.feedbackPoints = [];
+      state.lastReaction = 'normal';
+      state.reactionTick = 0;
+      state.startTime = Date.now();
+      state.elapsedMs = 0;
+      englishInput.value = '';
+      updateWordCount();
+      dialogueText.textContent = dialogues[name].intro;
+      document.querySelector('.input-hint').textContent = name === 'yamaken'
+        ? '✍️ 指定語数・構成・反論処理を厳守して英作文（条件違反は大幅減点）'
+        : '✍️ 主張＋理由＋具体例を英語で入力（2文以上推奨）';
+      btnSubmit.textContent = name === 'yamaken' ? '📚 答案を提出する' : '💬 英作文を送信';
+      updateUI();
+    }
+
+    function formatTime(ms) {
+      const total = Math.max(0, Math.floor(ms / 1000));
+      const minutes = Math.floor(total / 60);
+      const seconds = total % 60;
+      return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    }
+
+    function updateTimer() {
+      if (!state.startTime) return;
+      state.elapsedMs = Date.now() - state.startTime;
+      gameTimer.textContent = `⏱ ${formatTime(state.elapsedMs)}`;
+    }
+    setInterval(updateTimer, 500);
+
+    function returnToTitle() {
+      if (state.startTime && !state.isCleared && state.turns > 0 && !confirm('タイトルに戻ると、今回のプレイ記録はリセットされます。戻りますか？')) return;
+      resultModal.classList.remove('show');
+      gameScreen.classList.add('screen-hidden');
+      startScreen.classList.remove('screen-hidden');
+      state.startTime = null;
+    }
+
+    document.querySelectorAll('.character-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.character-card').forEach(c => {
+          c.classList.remove('selected');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        card.classList.add('selected');
+        card.setAttribute('aria-pressed', 'true');
+      });
+    });
+
+    document.getElementById('btnStartGame').addEventListener('click', () => {
+      const selected = document.querySelector('.character-card.selected');
+      const name = selected ? selected.dataset.character : 'rina';
+      startScreen.classList.add('screen-hidden');
+      gameScreen.classList.remove('screen-hidden');
+      switchHeroine(name);
+      gameTimer.textContent = '⏱ 00:00';
+    });
+    btnBackToTitle.addEventListener('click', returnToTitle);
+
+    function updateWordCount() {
+      const text = englishInput.value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      wordCounter.textContent = `単語数: ${words} words`;
+    }
+
+    // --- English Evaluation Engine ---
+    function evaluateEnglish(text) {
+      const clean = text.trim();
+      const words = clean.split(/\s+/);
+      const wordCount = words.length;
+      const sentences = clean.split(/[.!?]+/).filter(s => s.trim().length > 0);
+
+      let grammarScore = 45;
+      if (/^[A-Z]/.test(clean)) grammarScore += 10;
+      if (/[.!?]$/.test(clean)) grammarScore += 10;
+      if (sentences.length >= 2) grammarScore += 12;
+      if (wordCount >= 15) grammarScore += 10;
+      if (wordCount >= 28) grammarScore += 8;
+      if (/\b(which|who|that|where|when|if|would|could|should|having|being)\b/i.test(clean)) {
+        grammarScore += 10;
+      }
+      if (/\bi\b/.test(clean)) grammarScore -= 8;
+      grammarScore = Math.max(20, Math.min(100, grammarScore));
+
+      let logicScore = 40;
+      const connectors = [
+        'because', 'since', 'therefore', 'thus', 'however', 'although',
+        'while', 'moreover', 'furthermore', 'in addition', 'for example',
+        'for instance', 'in fact', 'as a result', 'first', 'second', 'believe', 'think'
+      ];
+      let connectorHits = 0;
+      connectors.forEach(conn => {
+        const regex = new RegExp(`\\b${conn}\\b`, 'i');
+        if (regex.test(clean)) connectorHits++;
+      });
+      logicScore += Math.min(45, connectorHits * 15);
+      if (wordCount >= 22) logicScore += 15;
+      logicScore = Math.max(20, Math.min(100, logicScore));
+
+      let charmScore = 40;
+      const charmWords = [
+        'you', 'your', 'smile', 'heart', 'love', 'special', 'future',
+        'together', 'sincere', 'genuine', 'respect', 'inspire', 'happy', 'worthy', 'admire'
+      ];
+      let charmHits = 0;
+      charmWords.forEach(w => {
+        const regex = new RegExp(`\\b${w}\\b`, 'i');
+        if (regex.test(clean)) charmHits++;
+      });
+      charmScore += Math.min(50, charmHits * 12);
+      if (sentences.length >= 2 && charmHits >= 2) charmScore += 10;
+      charmScore = Math.max(20, Math.min(100, charmScore));
+
+      if (state.heroine === 'yamaken') {
+        const activeTopic = topics[state.heroine][state.topicIndex];
+        const minWords = activeTopic.minWords ?? 80;
+        const maxWords = activeTopic.maxWords ?? 120;
+        if (wordCount < minWords || wordCount > maxWords) logicScore -= 25;
+        if (!/although|admittedly|critics|opponents|however/i.test(clean)) logicScore -= 15;
+        if (!/for example|for instance/i.test(clean)) logicScore -= 10;
+        if ((clean.match(/because|first|second|third|therefore|however|moreover|furthermore|although/gi) || []).length < 4) logicScore -= 15;
+        logicScore = Math.max(0, logicScore);
+      }
+      // Topic relevance is estimated from meaningful words in the assigned prompt.
+      // This is a local keyword check, not semantic AI: paraphrases may be under-counted.
+      const activeTopic = topics[state.heroine][state.topicIndex];
+      const stopWords = new Set('should high school students student the a an and or of to in for on with be is are do does did have has had more most less better than how what why who when where can could would will people person young their they them its it this that these those from by as at into about over under between across many some all any each every'.split(' '));
+      const promptTerms = [...new Set((activeTopic.en.toLowerCase().match(/[a-z]{4,}/g) || []).filter(w => !stopWords.has(w)))];
+      const answerTerms = new Set((clean.toLowerCase().match(/[a-z]{4,}/g) || []));
+      const matchedTerms = promptTerms.filter(w => answerTerms.has(w) || answerTerms.has(w.replace(/s$/, '')) || (w.endsWith('s') && answerTerms.has(w.slice(0,-1))));
+      const relevanceScore = promptTerms.length ? Math.round(100 * matchedTerms.length / Math.min(promptTerms.length, 7)) : 50;
+      if (relevanceScore < 20) logicScore -= 30;
+      else if (relevanceScore < 40) logicScore -= 15;
+      else if (relevanceScore >= 70) logicScore += 8;
+      logicScore = Math.max(0, Math.min(100, logicScore));
+      const avgScore = Math.round((grammarScore + logicScore + charmScore + relevanceScore) / 4);
+
+      let damage = Math.round((avgScore - 35) * 0.85);
+      if (wordCount < 6) damage = 5;
+      damage = Math.max(5, Math.min(65, damage));
+
+      const tips = [];
+      if (connectorHits < 2) {
+        tips.push("論理の接続詞（Although ～, because ～, Therefore, Moreover など）を2つ以上使うと、受験英作文でも減点されない盤石な論理構成になります。");
+      } else {
+        tips.push("論理マーカー（接続詞・副詞）が効果的に使われており、主張から理由への流れがとてもスムーズです！");
+      }
+      if (charmHits < 2) {
+        tips.push("議題への回答だけでなく、相手（you / your smile / genuine feelings など）への想いを後半の文で絡めると魅力度が急上昇します。");
+      } else {
+        tips.push("知的な意見のあとに自然な英語で好意を伝える構成が完璧で、ヒロインの心を強く揺さぶりました！");
+      }
+      if (/\bi\b/.test(clean)) {
+        tips.push("一人称の「I」は必ず大文字にしましょう。");
+      }
+
+      if (relevanceScore < 20) {
+        tips.push(`お題との関連語がほとんど確認できません。今回の問い「${activeTopic.en}」に直接答える文を最初に置き、問いの中心語を使って理由と具体例を説明してください。`);
+      } else if (relevanceScore < 40) {
+        tips.push(`お題への関連は一部ありますが、論点がずれている可能性があります。問い「${activeTopic.en}」の中心となる点に、理由と具体例が答えているか確認してください。`);
+      } else {
+        tips.push(`お題に関係する語句を${matchedTerms.length}個確認しました。ただし語句の一致だけでは内容理解を保証しません。問いに正面から答え、理由・具体例が主張を支えているか確認してください。`);
+      }
+
+      return {
+        grammarScore,
+        logicScore,
+        charmScore,
+        relevanceScore,
+        avgScore,
+        damage,
+        advice: tips.join(" ")
+      };
+    }
+
+    // --- Event Listeners ---
+    btnNextTopic.addEventListener('click', () => {
+      const list = topics[state.heroine];
+      state.topicIndex = (state.topicIndex + 1) % list.length;
+      updateUI();
+    });
+
+    btnInsertSample.addEventListener('click', () => {
+      const currentTopic = topics[state.heroine][state.topicIndex];
+      englishInput.value = currentTopic.sample;
+      updateWordCount();
+    });
+
+    englishInput.addEventListener('input', updateWordCount);
+
+    btnSubmit.addEventListener('click', () => {
+      const text = englishInput.value.trim();
+      if (!text) {
+        alert('英文を入力してください！（右上の「英文構成テンプレートを入れる」ボタンでも試せます）');
+        return;
+      }
+
+      const res = evaluateEnglish(text);
+      res.advice.split(/(?<=。)|(?<=！)/).map(x => x.trim()).filter(Boolean).forEach(point => { if (!state.feedbackPoints.includes(point)) state.feedbackPoints.push(point); });
+      state.turns++;
+      state.totalScore += res.avgScore;
+      state.hp = Math.max(0, state.hp - res.damage);
+
+      const hLines = dialogues[state.heroine];
+      state.reactionTick = 90; // ~1.5 seconds of active reaction animation
+      if (state.hp <= 0) {
+        state.isCleared = true;
+        state.lastReaction = 'cleared';
+        dialogueText.textContent = hLines.cleared;
+      } else if (res.damage >= 35) {
+        state.lastReaction = 'high';
+        dialogueText.textContent = hLines.highDamage;
+      } else if (res.damage >= 20) {
+        state.lastReaction = 'mid';
+        dialogueText.textContent = hLines.midDamage;
+      } else {
+        state.lastReaction = 'low';
+        dialogueText.textContent = hLines.lowDamage;
+      }
+
+      updateUI();
+      showResultModal(res);
+    });
+
+    function showResultModal(res) {
+      const currentTopic = topics[state.heroine][state.topicIndex];
+      const isYamaken = state.heroine === 'yamaken';
+      const heroineName = state.heroine === 'rina' ? '莉奈（りな）' : state.heroine === 'shiori' ? '栞（しおり）' : state.heroine === 'himari' ? '陽葵（ひまり）' : '山田健一（ヤマケン）';
+
+      if (state.hp <= 0) {
+        state.elapsedMs = Date.now() - state.startTime;
+        const avgTotal = Math.round(state.totalScore / Math.max(1, state.turns));
+        const pointsHtml = state.feedbackPoints.length
+          ? `<ul class="points-list">${state.feedbackPoints.map(point => `<li>${point}</li>`).join('')}</ul>`
+          : '<p>今回の添削ポイントはありません。</p>';
+        const resultExpression = isYamaken ? 'smile' : 'cleared';
+        const resultImagePath = portraitSources[state.heroine][resultExpression];
+        modalCardContent.innerHTML = `
+          <div class="final-result result-layout">
+            <div class="result-copy">
+              <div class="clear-title">🎉 わからせ完了！</div>
+              <p style="font-weight:800;color:#4b5263;">${heroineName}から最終評価を獲得しました。</p>
+              <div class="clear-quote ${isYamaken ? 'final-yamaken' : state.heroine === 'shiori' ? 'shiori' : ''}">${dialogues[state.heroine].cleared}</div>
+              <div class="result-meta">
+                <div><small>プレイ時間</small><strong>${formatTime(state.elapsedMs)}</strong></div>
+                <div><small>提出回数</small><strong>${state.turns} 回</strong></div>
+                <div><small>平均スコア</small><strong>${avgTotal} 点</strong></div>
+              </div>
+              <div class="feedback-section" style="text-align:left;">
+                <div class="feedback-heading">📝 英文で指摘されたポイント</div>
+                ${pointsHtml}
+              </div>
+              <div class="feedback-section model" style="text-align:left;">
+                <div class="feedback-heading">📖 最後に取り組んだ議題：${currentTopic.isTemplate ? '英文構成テンプレート' : '例文'}</div>
+                <div class="feedback-body">${currentTopic.sample}</div>
+              </div>
+              <button type="button" class="modal-close-btn" id="btnResultToTitle">タイトルに戻る</button>
+            </div>
+            <img class="result-character-image" src="${resultImagePath}" alt="${heroineName}・わからせ完了の表情" onerror="this.alt='画像が見つかりません: ' + this.src; this.style.minHeight='220px';">
+          </div>
+        `;
+        resultModal.classList.add('show');
+        document.getElementById('btnResultToTitle').addEventListener('click', () => {
+          resultModal.classList.remove('show');
+          gameScreen.classList.add('screen-hidden');
+          startScreen.classList.remove('screen-hidden');
+          state.startTime = null;
+        });
+      } else {
+        modalCardContent.innerHTML = `
+          <div class="modal-title">
+            <span>📊 英文採点＆講評レポート</span>
+            <span class="damage-pill">ガードHP -${res.damage}</span>
+          </div>
+          <div class="score-grid">
+            <div class="score-item"><div class="score-item-label">文法の美しさ</div><div class="score-item-num">${res.grammarScore}</div></div>
+            <div class="score-item"><div class="score-item-label">論理構成力</div><div class="score-item-num">${res.logicScore}</div></div>
+            <div class="score-item"><div class="score-item-label">表現力</div><div class="score-item-num">${res.charmScore}</div></div>
+            <div class="score-item"><div class="score-item-label">お題への適合度（語句判定）</div><div class="score-item-num">${res.relevanceScore}</div></div>
+          </div>
+          <p class="feedback-body" style="font-size:.78rem;color:#697386;">※お題への適合度は、設問中の重要語と英文中の語句の一致による簡易判定です。意味を完全に理解するAI採点ではありません。</p>
+          <div class="feedback-section"><div class="feedback-heading">💡 今回の添削ポイント</div><div class="feedback-body">${res.advice}</div></div>
+          <div class="feedback-section model"><div class="feedback-heading">✨ ${currentTopic.isTemplate ? '英文構成テンプレート' : '参考解答例'}</div><div class="feedback-body">${currentTopic.sample}</div></div>
+          <button type="button" class="modal-close-btn" id="btnContinueTurn">次のターンへ進む（残りHP: ${state.hp}）</button>
+        `;
+        resultModal.classList.add('show');
+        document.getElementById('btnContinueTurn').addEventListener('click', () => {
+          resultModal.classList.remove('show');
+          englishInput.value = '';
+          updateWordCount();
+          const list = topics[state.heroine];
+          state.topicIndex = (state.topicIndex + 1) % list.length;
+          updateUI();
+        });
+      }
+    }
+
+    updateUI();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGame);
+  } else {
+    initGame();
+  }
+})();
+</script>
+</body>
+</html>
